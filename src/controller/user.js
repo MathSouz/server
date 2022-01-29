@@ -1,6 +1,6 @@
 const { user } = require("../database/models/user");
 const { hashSync } = require("../service/bcrypt");
-const { ADMIN, NORMIE, httpStatusCodes, roles } = require("../_base/constants");
+const { httpStatusCodes, roles } = require("../_base/constants");
 const bcrypt = require("bcrypt");
 const { sign } = require("../service/jwt");
 const {

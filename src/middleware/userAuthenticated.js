@@ -22,7 +22,7 @@ const isAuthenticated = async (req, res, next) => {
 
   try {
     const { id } = verify(token);
-    const userFound = await user.findById(id);
+    const userFound = await user.findById(id).populate("following");
     req.user = userFound;
     next();
   } catch (err) {
