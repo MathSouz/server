@@ -22,12 +22,11 @@ const isAuthenticated = async (req, res, next) => {
 
   try {
     const { id } = verify(token);
-    const userFound = await user.findById(id).populate("following");
+    const userFound = (await user.findById(id)).toObject();
+    const followers = await user.find({ following: { $in: [id] } }).count();
 
-    userFound.following = userFound.following.map((follow) => {
-      follow.following = undefined;
-      return follow;
-    });
+    userFound.following = userFound.following.length;
+    userFound.followers = followers;
 
     req.user = userFound;
     next();

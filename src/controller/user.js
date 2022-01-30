@@ -12,7 +12,8 @@ const {
 const BaseError = require("../_base/error/baseError");
 
 exports.me = (req, res) => {
-  return res.json({ user: req.user });
+  const user = req.user;
+  return res.json(user);
 };
 
 exports.changeUsername = async (req, res, next) => {
