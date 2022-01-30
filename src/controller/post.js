@@ -11,7 +11,12 @@ exports.getRecentPosts = async (req, res) => {
   }
 
   const query = { private: false };
-  const options = { sort: "-createdAt", limit, page };
+  const options = {
+    sort: "-createdAt",
+    limit,
+    page,
+    populate: [{ path: "user", select: ["-following"] }],
+  };
   const posts = await post.paginate(query, options);
   return res.json(posts);
 };
@@ -36,7 +41,12 @@ exports.getUserRecentPosts = async (req, res) => {
   }
 
   const query = { user: targetUserId, private: false };
-  const options = { sort: "-createdAt", limit, page };
+  const options = {
+    sort: "-createdAt",
+    limit,
+    page,
+    populate: [{ path: "user", select: ["-following"] }],
+  };
 
   try {
     const posts = await post.paginate(query, options);
@@ -59,7 +69,12 @@ exports.getMyRecentPosts = async (req, res) => {
   }
 
   const query = { user: _id };
-  const options = { sort: "-createdAt", limit, page };
+  const options = {
+    sort: "-createdAt",
+    limit,
+    page,
+    populate: [{ path: "user", select: ["-following"] }],
+  };
 
   const posts = await post.paginate(query, options);
   return res.json(posts);
