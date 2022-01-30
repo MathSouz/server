@@ -26,6 +26,7 @@ const userSchema = mongoose.Schema({
   },
   avatarUrl: {
     type: String,
+    default: null,
   },
   createdAt: {
     type: Date,
