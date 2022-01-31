@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const { getRecentPosts } = require("../../controller/post");
+const { getRecentPosts, getPublicPost } = require("../../controller/post");
 
-router.get("/", getRecentPosts);
+router.get("/", getRecentPosts).get("/:postId", getPublicPost);
 
 module.exports = router;

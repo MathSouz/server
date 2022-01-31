@@ -5,12 +5,14 @@ const {
   createPost,
   getMyRecentPosts,
   getUserRecentPosts,
+  getPost,
 } = require("../../controller/post");
 
 router
   .use(isAuthenticated)
   .post("/create", createPost)
   .get("/", getMyRecentPosts)
-  .get("/:targetUserId", getUserRecentPosts);
+  .get("/user/:targetUserId", getUserRecentPosts)
+  .get("/:postId", getPost);
 
 module.exports = router;
