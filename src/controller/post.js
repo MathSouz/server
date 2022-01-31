@@ -82,6 +82,7 @@ exports.getMyRecentPosts = async (req, res) => {
 
 exports.createPost = async (req, res) => {
   const user = req.user;
+
   const { text, imageUrl, private } = req.body;
 
   if (!text) {

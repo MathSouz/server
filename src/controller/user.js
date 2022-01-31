@@ -11,9 +11,17 @@ const {
 } = require("../_base/error/");
 const BaseError = require("../_base/error/baseError");
 
-exports.me = (req, res) => {
-  const user = req.user;
-  return res.json(user);
+exports.me = async (req, res) => {
+  const userObj = req.user.toObject();
+
+  const followers = await user
+    .find({ following: { $in: [userObj._id] } })
+    .count();
+
+  userObj.following = userObj.following.length;
+  userObj.followers = followers;
+
+  return res.json(userObj);
 };
 
 exports.changeUsername = async (req, res, next) => {
