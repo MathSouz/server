@@ -6,7 +6,7 @@ const SECRET = process.env.JWT;
 const expiresIn = "1h";
 
 const sign = (payload) => {
-  return jwt.sign(payload, SECRET, { expiresIn });
+  return jwt.sign(payload, SECRET);
 };
 
 const verify = (token) => {
