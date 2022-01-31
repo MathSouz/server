@@ -19,7 +19,10 @@ exports.getPost = async (req, res, next) => {
       .findOne({ _id: postId })
       .populate("user", ["-following"]);
 
-    if (!user.following.includes(foundPost.user._id)) {
+    if (
+      !user.following.includes(foundPost.user._id) &&
+      user._id !== foundPost.user._id
+    ) {
       throw new ForbiddenError("You don't have permission.");
     }
 
