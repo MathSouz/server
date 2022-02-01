@@ -212,7 +212,7 @@ exports.login = async (req, res, next) => {
       throw new UnauthorizedError("Invalid credentials.");
     }
 
-    const token = sign({ id: foundUser._id });
+    const token = await sign(foundUser._id);
     return res.json({ token });
   } catch (err) {
     return next(err);
@@ -238,7 +238,7 @@ exports.register = async (req, res, next) => {
 
     const createdUser = await user.create({ username, email, password });
     createdUser.password = undefined;
-    const token = sign({ id: createdUser._id });
+    const token = await sign(createdUser._id);
 
     return res.json({ createdUser: user, token });
   } catch (err) {

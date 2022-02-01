@@ -21,12 +21,13 @@ const isAuthenticated = async (req, res, next) => {
   const token = authorizationToken[1];
 
   try {
-    const { id } = verify(token);
+    const id = await verify(token);
     const userFound = await user.findById(id);
 
     req.user = userFound;
     next();
   } catch (err) {
+    //console.log(err);
     return res.status(401).json({ message: "Invalid token" });
   }
 };

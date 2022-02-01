@@ -5,6 +5,7 @@ const {
   getPublicPost,
   getTagsWithOccurrences,
   getTags,
+  getUserRecentPosts,
 } = require("../../controller/post");
 
 router

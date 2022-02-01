@@ -1,16 +1,15 @@
 require("dotenv/config");
 const jwt = require("jsonwebtoken");
+const { generateToken, verifyToken } = require("../controller/token");
 
 const SECRET = process.env.JWT;
 
-const expiresIn = "1h";
-
-const sign = (payload) => {
-  return jwt.sign(payload, SECRET);
+const sign = async (payload) => {
+  return (await generateToken(payload)).token;
 };
 
-const verify = (token) => {
-  return jwt.verify(token, SECRET);
+const verify = async (token) => {
+  return await verifyToken(token);
 };
 
 module.exports = { sign, verify };
