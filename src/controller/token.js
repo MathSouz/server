@@ -1,5 +1,4 @@
 const { token } = require("../database/models/token");
-const { expiresAt } = require("../service/jwt");
 const { ForbiddenError, NotFoundError } = require("../_base/error");
 
 exports.generateToken = async (userId) => {
