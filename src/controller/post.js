@@ -155,7 +155,7 @@ exports.createPost = async (req, res, next) => {
       imageUrl,
       private,
     });
-    return res.json({ post: createdPost });
+    return res.json(createdPost);
   } catch (err) {
     console.log(err);
     return next(err);
