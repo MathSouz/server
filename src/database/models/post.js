@@ -24,6 +24,7 @@ const postSchema = mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  tags: [],
 });
 
 postSchema.plugin(mongoosePaginate);
