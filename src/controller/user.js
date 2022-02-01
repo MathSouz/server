@@ -11,6 +11,21 @@ const {
 } = require("../_base/error/");
 const BaseError = require("../_base/error/baseError");
 
+exports.getUser = async (req, res) => {
+  const { userId } = req.params;
+
+  const foundUser = (await user.findById(userId)).toObject();
+
+  const followers = await user
+    .find({ following: { $in: [foundUser._id] } })
+    .count();
+
+  foundUser.following = foundUser.following.length;
+  foundUser.followers = followers;
+
+  return res.json(foundUser);
+};
+
 exports.me = async (req, res) => {
   const userObj = req.user.toObject();
 
