@@ -140,9 +140,60 @@ exports.getMyRecentPosts = async (req, res, next) => {
   }
 };
 
+exports.getTags = async (req, res, next) => {
+  const { q, limit } = req.query;
+  const result = await post.find();
+  const tags = result
+    .map((post) => post.tags)
+    .filter((tagArray) => tagArray.length > 0)
+    .reduce((pV, cV) => {
+      return [...pV, ...cV];
+    }, [])
+    .filter((v, i, a) => a.indexOf(v) === i)
+    .filter((v) => {
+      return q ? v.startsWith(q) : true;
+    });
+  if (limit > 0) {
+    tags.length = limit;
+  }
+
+  return res.json(tags);
+};
+
+exports.getTagsWithOccurrences = async (req, res, next) => {
+  const { q, sort = "desc" } = req.query;
+  const result = await post.find();
+  const tags = result
+    .map((post) => post.tags)
+    .filter((tagArray) => tagArray.length > 0)
+    .reduce((pV, cV) => {
+      return [...pV, ...cV];
+    }, [])
+    .reduce(function (acc, curr) {
+      return acc[curr] ? ++acc[curr] : (acc[curr] = 1), acc;
+    }, {});
+
+  const keys = Object.keys(tags)
+    .map((v) => {
+      return { tag: v, occurrences: tags[v] };
+    })
+    .filter((v) => {
+      return q ? v.tag.startsWith(q) : true;
+    })
+    .sort((a, b) => {
+      if (sort === "asc") {
+        return a.occurrences - b.occurrences;
+      } else {
+        return b.occurrences - a.occurrences;
+      }
+    });
+
+  return res.json(keys);
+};
+
 exports.createPost = async (req, res, next) => {
   const user = req.user;
-  const { text, imageUrl, private } = req.body;
+  let { text, imageUrl, private, tags } = req.body;
   user.following = undefined;
 
   try {
@@ -150,11 +201,18 @@ exports.createPost = async (req, res, next) => {
       return new BadRequestError("No text.");
     }
 
+    if (!tags) {
+      tags = [];
+    }
+
+    tags = tags.map((v) => v.toLowerCase());
+
     const createdPost = await post.create({
       user,
       text,
       imageUrl,
       private,
+      tags,
     });
     return res.json(createdPost);
   } catch (err) {
