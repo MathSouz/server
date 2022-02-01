@@ -10,33 +10,55 @@ const {
   NotFoundError,
 } = require("../_base/error/");
 const BaseError = require("../_base/error/baseError");
+const { isValidObjectId } = require("mongoose");
 
-exports.getUser = async (req, res) => {
+exports.getUser = async (req, res, next) => {
   const { userId } = req.params;
 
-  const foundUser = (await user.findById(userId)).toObject();
+  try {
+    if (!userId) {
+      throw new BadRequestError("No user.");
+    }
 
-  const followers = await user
-    .find({ following: { $in: [foundUser._id] } })
-    .count();
+    if (!isValidObjectId(userId)) {
+      throw new BadRequestError("Invalid user id.");
+    }
 
-  foundUser.following = foundUser.following.length;
-  foundUser.followers = followers;
+    const queriedUser = await user.findById(userId);
 
-  return res.json(foundUser);
+    if (!queriedUser) {
+      throw new NotFoundError(`No user found for id '${userId}'`);
+    }
+    const foundUser = queriedUser.toObject();
+
+    const followers = await user
+      .find({ following: { $in: [foundUser._id] } })
+      .count();
+
+    foundUser.following = foundUser.following.length;
+    foundUser.followers = followers;
+
+    return res.json(foundUser);
+  } catch (err) {
+    return next(err);
+  }
 };
 
-exports.me = async (req, res) => {
-  const userObj = req.user.toObject();
+exports.me = async (req, res, next) => {
+  try {
+    const userObj = req.user.toObject();
 
-  const followers = await user
-    .find({ following: { $in: [userObj._id] } })
-    .count();
+    const followers = await user
+      .find({ following: { $in: [userObj._id] } })
+      .count();
 
-  userObj.following = userObj.following.length;
-  userObj.followers = followers;
+    userObj.following = userObj.following.length;
+    userObj.followers = followers;
 
-  return res.json(userObj);
+    return res.json(userObj);
+  } catch (err) {
+    return next(err);
+  }
 };
 
 exports.changeUsername = async (req, res, next) => {
