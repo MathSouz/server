@@ -11,6 +11,7 @@ const {
 } = require("../_base/error/");
 const BaseError = require("../_base/error/baseError");
 const { isValidObjectId } = require("mongoose");
+const { revokeToken } = require("./token");
 
 exports.getUser = async (req, res, next) => {
   const { userId } = req.params;
@@ -182,6 +183,15 @@ exports.unfollowUser = async (req, res, next) => {
     } else {
       throw new NotFoundError("You are not following this user.");
     }
+  } catch (err) {
+    return next(err);
+  }
+};
+
+exports.logout = async (req, res, next) => {
+  try {
+    const deleted = await revokeToken(req.token);
+    return res.sendStatus(httpStatusCodes.OK);
   } catch (err) {
     return next(err);
   }

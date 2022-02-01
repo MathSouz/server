@@ -8,6 +8,7 @@ const {
   changeRole,
   followUser,
   unfollowUser,
+  logout,
 } = require("../../controller/user");
 
 router
@@ -17,6 +18,7 @@ router
   .put("/change/password", changePassword)
   .put("/change/role/:targetId", changeRole)
   .post("/followers/add/:targetUserId", followUser)
+  .delete("/logout", logout)
   .delete("/followers/remove/:targetUserId", unfollowUser);
 
 module.exports = router;

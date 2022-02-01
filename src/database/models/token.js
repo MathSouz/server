@@ -1,11 +1,6 @@
 const { mongoose } = require("../");
 const randomstring = require("randomstring");
-
-const expiresAt = () => {
-  const dt = new Date();
-  dt.setDate(dt.getDate() + 1);
-  return dt;
-};
+const { expiresAt } = require("../../service/jwt");
 
 const tokenSchema = mongoose.Schema({
   userId: {

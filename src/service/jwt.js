@@ -4,12 +4,16 @@ const { generateToken, verifyToken } = require("../controller/token");
 
 const SECRET = process.env.JWT;
 
-const sign = async (payload) => {
+exports.expiresAt = () => {
+  const dt = new Date();
+  dt.setDate(dt.getDate() + 1);
+  return dt;
+};
+
+exports.sign = async (payload) => {
   return (await generateToken(payload)).token;
 };
 
-const verify = async (token) => {
+exports.verify = async (token) => {
   return await verifyToken(token);
 };
-
-module.exports = { sign, verify };
