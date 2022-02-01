@@ -143,6 +143,7 @@ exports.getMyRecentPosts = async (req, res, next) => {
 exports.createPost = async (req, res, next) => {
   const user = req.user;
   const { text, imageUrl, private } = req.body;
+  user.following = undefined;
 
   try {
     if (!text) {
@@ -150,7 +151,7 @@ exports.createPost = async (req, res, next) => {
     }
 
     const createdPost = await post.create({
-      user: user.id,
+      user,
       text,
       imageUrl,
       private,
