@@ -75,37 +75,6 @@ exports.getTags = async (req, res, next) => {
   return res.json(tags)
 }
 
-exports.getTagsWithOccurrences = async (req, res, next) => {
-  const { q, sort = "desc" } = req.query
-  const result = await post.find()
-  const tags = result
-    .map(post => post.tags)
-    .filter(tagArray => tagArray.length > 0)
-    .reduce((pV, cV) => {
-      return [...pV, ...cV]
-    }, [])
-    .reduce(function (acc, curr) {
-      return acc[curr] ? ++acc[curr] : (acc[curr] = 1), acc
-    }, {})
-
-  const keys = Object.keys(tags)
-    .map(v => {
-      return { tag: v, occurrences: tags[v] }
-    })
-    .filter(v => {
-      return q ? v.tag.startsWith(q) : true
-    })
-    .sort((a, b) => {
-      if (sort === "asc") {
-        return a.occurrences - b.occurrences
-      } else {
-        return b.occurrences - a.occurrences
-      }
-    })
-
-  return res.json(keys)
-}
-
 exports.createPost = async (req, res, next) => {
   const user = req.user
   let { text, imageUrl, tags } = req.body

@@ -1,7 +1,7 @@
 exports.roles = {
   NORMIE: "NORMIE",
-  ADMIN: "ADMIN",
-};
+  ADMIN: "ADMIN"
+}
 
 exports.httpStatusCodes = {
   OK: 200,
@@ -9,8 +9,8 @@ exports.httpStatusCodes = {
   UNAUTHORIZED: 401,
   FORBIDDEN: 403,
   NOT_FOUND: 404,
-  INTERNAL_SERVER: 500,
-};
+  INTERNAL_SERVER: 500
+}
 
 exports.models = {
   user: "user",
@@ -18,7 +18,11 @@ exports.models = {
   comment: "comment",
   reaction: "reaction",
   token: "token",
-  report: "report",
-};
+  report: "report"
+}
 
-exports.VALID_REPORT_TARGETS = [models.user, models.post, models.comment];
+exports.VALID_REPORT_TARGETS = [
+  this.models.user,
+  this.models.post,
+  this.models.comment
+]
