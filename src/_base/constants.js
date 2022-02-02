@@ -26,3 +26,5 @@ exports.VALID_REPORT_TARGETS = [
   this.models.post,
   this.models.comment
 ]
+
+exports.VALID_MOODS = ["none", "love", "hate"]

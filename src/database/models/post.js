@@ -1,7 +1,7 @@
 const { SchemaTypes } = require("mongoose")
 const { mongoose } = require("../")
 const mongoosePaginate = require("mongoose-paginate-v2")
-const { models } = require("../../_base/constants")
+const { models, VALID_MOODS } = require("../../_base/constants")
 
 const postSchema = mongoose.Schema(
   {
@@ -14,11 +14,14 @@ const postSchema = mongoose.Schema(
       type: String,
       required: true
     },
-    reactions: {
-      type: [{ type: SchemaTypes.ObjectId, ref: models.reaction }]
+    loveReactions: {
+      type: [{ type: SchemaTypes.ObjectId, ref: models.user }]
+    },
+    hateReactions: {
+      type: [{ type: SchemaTypes.ObjectId, ref: models.user }]
     },
     comments: {
-      type: [{ type: SchemaTypes.ObjectId, ref: models.comments }]
+      type: [{ type: SchemaTypes.ObjectId, ref: models.comment }]
     },
     imageUrl: {
       type: String

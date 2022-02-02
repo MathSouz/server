@@ -1,7 +1,7 @@
 const { isValidObjectId } = require("mongoose")
-const { PaginationParameters } = require("mongoose-paginate-v2")
 const { post } = require("../database/models/post")
-const { httpStatusCodes } = require("../_base/constants")
+const { reaction } = require("../database/models/reaction")
+const { httpStatusCodes, VALID_MOODS } = require("../_base/constants")
 const { NotFoundError, BadRequestError } = require("../_base/error")
 
 exports.getPost = async (req, res, next) => {
@@ -18,6 +18,62 @@ exports.getPost = async (req, res, next) => {
       throw new NotFoundError("Post not found.")
     }
     return res.json(foundPost)
+  } catch (err) {
+    return next(err)
+  }
+}
+
+exports.reactPost = async (req, res, next) => {
+  const user = req.user
+  const { postId } = req.params
+  const { mood } = req.body
+
+  try {
+    if (!VALID_MOODS.includes(mood)) {
+      throw new BadRequestError("Invalid Mood.")
+    }
+
+    if (!isValidObjectId(postId)) {
+      throw new BadRequestError("Invalid post id.")
+    }
+
+    const foundPost = await post.findById(postId)
+
+    if (!foundPost) {
+      throw new NotFoundError("Post not found.")
+    }
+
+    if (mood !== VALID_MOODS[0]) {
+      if (mood === VALID_MOODS[1]) {
+        await post.findOneAndUpdate(
+          { _id: postId },
+          {
+            $addToSet: { loveReactions: user._id },
+            $pull: { hateReactions: user._id }
+          },
+          { new: true }
+        )
+      } else {
+        await post.findOneAndUpdate(
+          { _id: postId },
+          {
+            $addToSet: { hateReactions: user._id },
+            $pull: { loveReactions: user._id }
+          },
+          { new: true }
+        )
+      }
+    } else {
+      await post.findOneAndUpdate(
+        { _id: postId },
+        {
+          $pull: { hateReactions: user._id },
+          $pull: { loveReactions: user._id }
+        },
+        { new: true }
+      )
+    }
+    return res.json({ mood })
   } catch (err) {
     return next(err)
   }

@@ -1,14 +1,17 @@
 const { SchemaTypes } = require("mongoose")
 const { mongoose } = require("../")
-const { models } = require("../../_base/constants")
-
-exports.VALID_MOODS = ["love", "hate"]
+const { models, VALID_MOODS } = require("../../_base/constants")
 
 const reactionSchema = mongoose.Schema(
   {
     user: {
       type: SchemaTypes.ObjectId,
       ref: models.user,
+      required: true
+    },
+    post: {
+      type: SchemaTypes.ObjectId,
+      ref: models.post,
       required: true
     },
     mood: {
