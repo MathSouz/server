@@ -25,19 +25,11 @@ exports.getUser = async (req, res, next) => {
       throw new BadRequestError("Invalid user id.");
     }
 
-    const queriedUser = await user.findById(userId);
+    const foundUser = await user.findById(userId);
 
-    if (!queriedUser) {
+    if (!foundUser) {
       throw new NotFoundError(`No user found for id '${userId}'`);
     }
-    const foundUser = queriedUser.toObject();
-
-    const followers = await user
-      .find({ following: { $in: [foundUser._id] } })
-      .count();
-
-    foundUser.following = foundUser.following.length;
-    foundUser.followers = followers;
 
     return res.json(foundUser);
   } catch (err) {
@@ -47,15 +39,7 @@ exports.getUser = async (req, res, next) => {
 
 exports.me = async (req, res, next) => {
   try {
-    const userObj = req.user.toObject();
-
-    const followers = await user
-      .find({ following: { $in: [userObj._id] } })
-      .count();
-
-    userObj.following = userObj.following.length;
-    userObj.followers = followers;
-
+    const userObj = req.user;
     return res.json(userObj);
   } catch (err) {
     return next(err);
@@ -139,49 +123,6 @@ exports.changeRole = async (req, res, next) => {
       return res.sendStatus(200);
     } else {
       throw new ForbiddenError("You already have this role.");
-    }
-  } catch (err) {
-    return next(err);
-  }
-};
-
-exports.followUser = async (req, res, next) => {
-  const { _id } = req.user;
-  const { targetUserId } = req.params;
-
-  try {
-    if (_id == targetUserId) {
-      throw new BadRequestError("Cannot follow yourself.");
-    }
-    const update = await user.updateOne(
-      { _id },
-      { $addToSet: { following: targetUserId } }
-    );
-
-    if (update.modifiedCount > 0) {
-      return res.sendStatus(200);
-    } else {
-      throw new ForbiddenError("You are already following this user.");
-    }
-  } catch (err) {
-    return next(err);
-  }
-};
-
-exports.unfollowUser = async (req, res, next) => {
-  const { _id } = req.user;
-  const { targetUserId } = req.params;
-
-  try {
-    const update = await user.updateOne(
-      { _id },
-      { $pull: { following: targetUserId } }
-    );
-
-    if (update.modifiedCount) {
-      return res.sendStatus(httpStatusCodes.OK);
-    } else {
-      throw new NotFoundError("You are not following this user.");
     }
   } catch (err) {
     return next(err);

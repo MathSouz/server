@@ -3,16 +3,16 @@ const router = express.Router();
 const { isAuthenticated } = require("../../middleware/userAuthenticated");
 const {
   createPost,
-  getMyRecentPosts,
-  getUserRecentPosts,
+  getAllPosts,
   getPost,
+  deletePost,
 } = require("../../controller/post");
 
 router
   .use(isAuthenticated)
   .post("/create", createPost)
-  .get("/", getMyRecentPosts)
-  .get("/user/:targetUserId", getUserRecentPosts)
-  .get("/:postId", getPost);
+  .delete("/:postId", deletePost)
+  .get("/:postId", getPost)
+  .get("/", getAllPosts);
 
 module.exports = router;

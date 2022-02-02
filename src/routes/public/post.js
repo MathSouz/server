@@ -5,12 +5,10 @@ const {
   getPublicPost,
   getTagsWithOccurrences,
   getTags,
-  getUserRecentPosts,
 } = require("../../controller/post");
 
 router
   .get("/", getRecentPosts)
-  .get("/:postId", getPublicPost)
   .get("/tags/occurences", getTagsWithOccurrences)
   .get("/tags/all", getTags);
 
