@@ -1,8 +1,17 @@
 const { isValidObjectId } = require("mongoose")
 const { post } = require("../database/models/post")
-const { reaction } = require("../database/models/reaction")
-const { httpStatusCodes, VALID_MOODS } = require("../_base/constants")
-const { NotFoundError, BadRequestError } = require("../_base/error")
+const { upload, deleteImage } = require("../service/s3")
+const {
+  httpStatusCodes,
+  VALID_MOODS,
+  models,
+  roles
+} = require("../_base/constants")
+const {
+  NotFoundError,
+  BadRequestError,
+  UnauthorizedError
+} = require("../_base/error")
 
 exports.getPost = async (req, res, next) => {
   const { postId } = req.params
@@ -86,9 +95,21 @@ exports.deletePost = async (req, res, next) => {
       throw new BadRequestError("Invalid post id.")
     }
 
-    const deleted = await post.findByIdAndDelete(postId)
+    const foundPost = await post.findById(postId)
 
-    if (deleted) {
+    const user = req.user
+
+    if (foundPost.user != user._id && user.role !== roles.ADMIN) {
+      throw new UnauthorizedError("You don't have permission.")
+    }
+
+    if (foundPost) {
+      const deleted = await foundPost.remove()
+
+      if (foundPost.imageUrl) {
+        deleteImage(deleted.imageUrl.key)
+      }
+
       return res.sendStatus(httpStatusCodes.OK)
     } else {
       throw new NotFoundError("Post not found.")
@@ -105,6 +126,64 @@ exports.getAllPosts = async (req, res, next) => {
     const options = { limit, page, sort: { createdAt: sort } }
 
     const posts = await post.paginate({}, options)
+    return res.json(posts)
+  } catch (err) {
+    return next(err)
+  }
+}
+
+exports.getRankedPosts = async (req, res, next) => {
+  const { limit = 10, page = 1 } = req.query
+
+  try {
+    const options = { limit, page }
+
+    const from = new Date()
+    from.setHours(0)
+    from.setMinutes(0)
+    from.setSeconds(0)
+
+    const to = new Date()
+    to.setDate(to.getDate() + 1)
+    to.setHours(0)
+    to.setMinutes(0)
+    to.setSeconds(0)
+
+    const query = [
+      {
+        $match: {
+          createdAt: {
+            $gte: new Date("Wed, 02 Feb 2022 03:00:00 GMT")
+          }
+        }
+      },
+      {
+        $project: {
+          user: "$user",
+          loveReactions: "$loveReactions",
+          hateReactions: "$hateReactions",
+          loveReactionsCount: {
+            $size: "$loveReactions"
+          },
+          hateReactionsCount: {
+            $size: "$hateReactions"
+          },
+          tags: "$tags",
+          createdAt: "$createdAt",
+          updatedAt: "$updatedAt"
+        }
+      },
+      {
+        $sort: {
+          upvotes: -1
+        }
+      }
+    ]
+
+    const aggregation = post.aggregate(query)
+
+    const posts = await post.aggregatePaginate(aggregation, options)
+
     return res.json(posts)
   } catch (err) {
     return next(err)
@@ -133,7 +212,14 @@ exports.getTags = async (req, res, next) => {
 
 exports.createPost = async (req, res, next) => {
   const user = req.user
-  let { text, imageUrl, tags } = req.body
+  let { text, tags } = req.body
+  const part = req.file
+  const imageUrl = part
+    ? {
+        location: part.location,
+        key: part.key
+      }
+    : null
 
   try {
     if (!text) {
@@ -142,6 +228,10 @@ exports.createPost = async (req, res, next) => {
 
     if (!tags) {
       tags = []
+    }
+
+    if (!Array.isArray(tags)) {
+      tags = [tags]
     }
 
     tags = tags.map(v => v.toLowerCase())

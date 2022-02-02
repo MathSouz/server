@@ -1,6 +1,7 @@
 const { SchemaTypes } = require("mongoose")
 const { mongoose } = require("../")
 const mongoosePaginate = require("mongoose-paginate-v2")
+const mongoosePaginateAggregate = require("mongoose-aggregate-paginate-v2")
 const { models, VALID_MOODS } = require("../../_base/constants")
 
 const postSchema = mongoose.Schema(
@@ -24,7 +25,7 @@ const postSchema = mongoose.Schema(
       type: [{ type: SchemaTypes.ObjectId, ref: models.comment }]
     },
     imageUrl: {
-      type: String
+      type: Object
     },
     tags: []
   },
@@ -32,6 +33,7 @@ const postSchema = mongoose.Schema(
 )
 
 postSchema.plugin(mongoosePaginate)
+postSchema.plugin(mongoosePaginateAggregate)
 
 const post = mongoose.model(models.post, postSchema)
 module.exports = { post }

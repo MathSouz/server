@@ -13,12 +13,12 @@ exports.httpStatusCodes = {
 }
 
 exports.models = {
-  user: "user",
-  post: "post",
-  comment: "comment",
-  reaction: "reaction",
-  token: "token",
-  report: "report"
+  user: "users",
+  post: "posts",
+  comment: "comments",
+  reaction: "reactions",
+  token: "tokens",
+  report: "reports"
 }
 
 exports.VALID_REPORT_TARGETS = [

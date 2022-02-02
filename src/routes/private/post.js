@@ -6,15 +6,18 @@ const {
   getAllPosts,
   getPost,
   deletePost,
-  reactPost
+  reactPost,
+  getRankedPosts
 } = require("../../controller/post")
+const { upload } = require("../../service/s3")
 
 router
   .use(isAuthenticated)
-  .post("/create", createPost)
+  .post("/create", upload.single("image"), createPost)
   .put("/:postId/react", reactPost)
   .delete("/:postId", deletePost)
   .get("/:postId", getPost)
   .get("/", getAllPosts)
+  .get("/get/rank", getRankedPosts)
 
 module.exports = router
