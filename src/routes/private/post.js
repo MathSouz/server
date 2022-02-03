@@ -10,6 +10,11 @@ const {
   getRankedPosts
 } = require("../../controller/post")
 const { uploadPostImage } = require("../../service/s3")
+const {
+  createComment,
+  getPostComments,
+  deleteComment
+} = require("../../controller/comment")
 
 router
   .use(isAuthenticated)
@@ -19,5 +24,8 @@ router
   .get("/:postId", getPost)
   .get("/", getAllPosts)
   .get("/get/rank", getRankedPosts)
+  .post("/:postId/comment", createComment)
+  .get("/:postId/comment", getPostComments)
+  .delete("/comment/:commentId", deleteComment)
 
 module.exports = router

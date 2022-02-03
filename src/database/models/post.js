@@ -21,9 +21,6 @@ const postSchema = mongoose.Schema(
     hateReactions: {
       type: [{ type: SchemaTypes.ObjectId, ref: models.user }]
     },
-    comments: {
-      type: [{ type: SchemaTypes.ObjectId, ref: models.comment }]
-    },
     imageUrl: {
       type: Object
     },

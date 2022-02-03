@@ -50,7 +50,6 @@ exports.uploadUserImage = multer({
     },
     key: function (req, file, cb) {
       const userId = req.user._id
-      const nowTimeStamp = Date.now().toString()
       const name = `avatars/${userId}`
       cb(null, name)
     }

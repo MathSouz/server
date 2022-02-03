@@ -1,6 +1,7 @@
 const { SchemaTypes } = require("mongoose")
 const { mongoose } = require("../")
 const { models, VALID_REPORT_TARGETS } = require("../../_base/constants")
+const mongoosePaginate = require("mongoose-paginate-v2")
 
 const reportSchema = mongoose.Schema(
   {
@@ -21,10 +22,16 @@ const reportSchema = mongoose.Schema(
       type: String,
       enum: VALID_REPORT_TARGETS,
       required: true
+    },
+    solved: {
+      type: Boolean,
+      default: false
     }
   },
   { timestamps: true }
 )
+
+reportSchema.plugin(mongoosePaginate)
 
 const report = mongoose.model(models.report, reportSchema)
 module.exports = { report }
