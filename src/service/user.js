@@ -6,9 +6,9 @@ const {
   NotFoundError
 } = require("../_base/error")
 const { sign, revoke } = require("./token")
-const bcrypt = require("bcrypt")
 const { roles } = require("../_base/constants")
 const { isValidObjectId } = require("mongoose")
+const { compareSync, hashSync } = require("./bcrypt")
 
 exports.registerUser = async (username, email, password) => {
   if (!username) {
@@ -47,7 +47,7 @@ exports.loginUser = async (email, password) => {
     throw new UnauthorizedError("Invalid credentials.")
   }
 
-  if (!bcrypt.compareSync(password, foundUser.password)) {
+  if (!compareSync(password, foundUser.password)) {
     throw new UnauthorizedError("Invalid credentials.")
   }
 
@@ -93,7 +93,7 @@ exports.changePassword = async (currentUser, password) => {
     throw new BadRequestError("No password.")
   }
 
-  const encryptedPassword = bcrypt.hashSync(password, 10)
+  const encryptedPassword = hashSync(password, 10)
   const update = await user.updateOne(
     { _id: currentUser._id },
     { password: encryptedPassword }
