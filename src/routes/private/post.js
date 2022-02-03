@@ -15,6 +15,7 @@ const {
   getPostComments,
   deleteComment
 } = require("../../controller/comment")
+const verifyPaginationParams = require("../../middleware/verifyPaginationParams")
 
 router
   .use(isAuthenticated)
@@ -22,8 +23,8 @@ router
   .put("/:postId/react", reactPost)
   .delete("/:postId", deletePost)
   .get("/:postId", getPost)
-  .get("/", getAllPosts)
-  .get("/get/rank", getRankedPosts)
+  .get("/", verifyPaginationParams, getAllPosts)
+  .get("/get/rank", verifyPaginationParams, getRankedPosts)
   .post("/:postId/comment", createComment)
   .get("/:postId/comment", getPostComments)
   .delete("/comment/:commentId", deleteComment)
