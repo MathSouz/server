@@ -27,8 +27,7 @@ const userSchema = mongoose.Schema(
       default: roles.NORMIE
     },
     avatarUrl: {
-      type: String,
-      default: null
+      type: Object
     }
   },
   { timestamps: true }

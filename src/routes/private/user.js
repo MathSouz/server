@@ -6,8 +6,10 @@ const {
   changeUsername,
   changePassword,
   changeRole,
-  logout
+  logout,
+  changeAvatar
 } = require("../../controller/user")
+const { uploadPostImage, uploadUserImage } = require("../../service/s3")
 
 router
   .use(isAuthenticated)
@@ -15,6 +17,7 @@ router
   .put("/change/username", changeUsername)
   .put("/change/password", changePassword)
   .put("/change/role/:targetId", changeRole)
+  .put("/change/avatar", uploadUserImage.single("image"), changeAvatar)
   .delete("/logout", logout)
 
 module.exports = router

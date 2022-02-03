@@ -9,11 +9,11 @@ const {
   reactPost,
   getRankedPosts
 } = require("../../controller/post")
-const { upload } = require("../../service/s3")
+const { uploadPostImage } = require("../../service/s3")
 
 router
   .use(isAuthenticated)
-  .post("/create", upload.single("image"), createPost)
+  .post("/create", uploadPostImage.single("image"), createPost)
   .put("/:postId/react", reactPost)
   .delete("/:postId", deletePost)
   .get("/:postId", getPost)

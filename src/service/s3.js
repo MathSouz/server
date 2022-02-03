@@ -2,7 +2,7 @@ require("dotenv")
 var aws = require("aws-sdk")
 var multer = require("multer")
 var multerS3 = require("multer-s3")
-const { BadRequestError } = require("../_base/error")
+const { BadRequestError, InternalServerError } = require("../_base/error")
 
 var s3 = new aws.S3({
   credentials: {
@@ -12,9 +12,7 @@ var s3 = new aws.S3({
   region: process.env.AWS_DEFAULT_REGION
 })
 
-const multerFilter = (req, file, cb) => {
-  const allowedMimes = ["image/jpeg", "image/pjpeg", "image/png", "image/gif"]
-
+const multerFilter = allowedMimes => (req, file, cb) => {
   if (allowedMimes.includes(file.mimetype)) {
     cb(null, true)
   } else {
@@ -22,7 +20,7 @@ const multerFilter = (req, file, cb) => {
   }
 }
 
-exports.upload = multer({
+exports.uploadPostImage = multer({
   storage: multerS3({
     s3: s3,
     contentType: multerS3.AUTO_CONTENT_TYPE,
@@ -34,15 +32,36 @@ exports.upload = multer({
     key: function (req, file, cb) {
       const userId = req.user._id
       const nowTimeStamp = Date.now().toString()
-      const name = `${userId}/${nowTimeStamp}`
+      const name = `posts/${userId}/${nowTimeStamp}`
       cb(null, name)
     }
   }),
-  fileFilter: multerFilter
+  fileFilter: multerFilter(["image/jpeg", "image/png", "image/gif"])
+})
+
+exports.uploadUserImage = multer({
+  storage: multerS3({
+    s3: s3,
+    contentType: multerS3.AUTO_CONTENT_TYPE,
+    bucket: process.env.BUCKET_NAME,
+    acl: "public-read-write",
+    metadata: function (req, file, cb) {
+      cb(null, { fieldName: file.fieldname })
+    },
+    key: function (req, file, cb) {
+      const userId = req.user._id
+      const nowTimeStamp = Date.now().toString()
+      const name = `avatars/${userId}`
+      cb(null, name)
+    }
+  }),
+  fileFilter: multerFilter(["image/jpeg", "image/png"])
 })
 
 exports.deleteImage = Key => {
   s3.deleteObject({ Bucket: process.env.BUCKET_NAME, Key }, (err, data) => {
-    console.log(err, data)
+    if (err) {
+      throw new InternalServerError()
+    }
   })
 }
