@@ -28,6 +28,10 @@ const userSchema = mongoose.Schema(
     },
     avatarUrl: {
       type: Object
+    },
+    banned: {
+      type: Boolean,
+      select: false
     }
   },
   { timestamps: true }

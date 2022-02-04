@@ -2,7 +2,7 @@ const { SchemaTypes } = require("mongoose")
 const { mongoose } = require("../")
 const mongoosePaginate = require("mongoose-paginate-v2")
 const mongoosePaginateAggregate = require("mongoose-aggregate-paginate-v2")
-const { models, VALID_MOODS } = require("../../_base/constants")
+const { models } = require("../../_base/constants")
 
 const postSchema = mongoose.Schema(
   {

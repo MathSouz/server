@@ -25,7 +25,7 @@ exports.registerUser = async (username, email, password) => {
 
   const createdUser = await user.create({ username, email, password })
   createdUser.password = undefined
-  const token = await sign(createdUser._id)
+  const token = await sign(createdUser)
   return { createdUser: user, token }
 }
 
@@ -42,16 +42,21 @@ exports.loginUser = async (email, password) => {
     .findOne({ email })
     .select("+password")
     .select("+email")
+    .select("+banned")
 
   if (!foundUser) {
     throw new UnauthorizedError("Invalid credentials.")
+  }
+
+  if (foundUser.banned) {
+    throw new ForbiddenError("This user has been banned.")
   }
 
   if (!compareSync(password, foundUser.password)) {
     throw new UnauthorizedError("Invalid credentials.")
   }
 
-  const token = await sign(foundUser._id)
+  const token = await sign(foundUser)
   return { token }
 }
 
@@ -77,9 +82,6 @@ exports.changeRole = async (currentUser, targetId, newRole) => {
     throw new BadRequestError("No target user id.")
   }
 
-  if (currentUser.role !== roles.ADMIN) {
-    throw new UnauthorizedError("You are not allowed to do that.")
-  }
   const update = await user.updateOne({ _id: targetId }, { role: selectedRole })
 
   if (!update.modifiedCount) {
@@ -147,4 +149,15 @@ exports.getUser = async userId => {
   }
 
   return foundUser
+}
+exports.banUser = async (userId, banned = true) => {
+  if (!userId) {
+    throw new BadRequestError("No user id.")
+  }
+
+  if (!isValidObjectId(userId)) {
+    throw new BadRequestError("Invalid user id.")
+  }
+
+  await user.updateOne({ _id: userId }, { banned })
 }

@@ -1,6 +1,7 @@
 const { mongoose } = require("../")
 const randomstring = require("randomstring")
 const { models } = require("../../_base/constants")
+const { SchemaTypes } = require("mongoose")
 
 const generateExpirationDate = () => {
   const dt = new Date()
@@ -10,8 +11,8 @@ const generateExpirationDate = () => {
 
 const tokenSchema = mongoose.Schema(
   {
-    userId: {
-      type: String,
+    user: {
+      type: SchemaTypes.ObjectId,
       required: true
     },
     token: {

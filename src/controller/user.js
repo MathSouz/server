@@ -7,8 +7,10 @@ const {
   changePassword,
   changeUsername,
   changeAvatar,
-  getUser
+  getUser,
+  banUser
 } = require("../service/user")
+const { ForbiddenError } = require("../_base/error")
 
 exports.getUser = async (req, res, next) => {
   const { userId } = req.params
@@ -107,6 +109,28 @@ exports.register = async (req, res, next) => {
   try {
     const createdUser = await registerUser(username, email, password)
     return res.json(createdUser)
+  } catch (err) {
+    return next(err)
+  }
+}
+
+exports.banUser = async (req, res, next) => {
+  const { userId } = req.params
+  try {
+    await banUser(userId, true)
+
+    return res.sendStatus(httpStatusCodes.OK)
+  } catch (err) {
+    return next(err)
+  }
+}
+
+exports.pardonUser = async (req, res, next) => {
+  const { userId } = req.params
+  try {
+    await banUser(userId, false)
+
+    return res.sendStatus(httpStatusCodes.OK)
   } catch (err) {
     return next(err)
   }
