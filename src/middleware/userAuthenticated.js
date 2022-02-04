@@ -1,4 +1,4 @@
-const { user } = require("../database/models/user")
+const { user } = require("../../database/models/user")
 const { verify } = require("../service/token")
 const { NotFoundError, BadRequestError } = require("../_base/error")
 

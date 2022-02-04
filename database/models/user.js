@@ -1,7 +1,6 @@
-const { SchemaTypes } = require("mongoose")
 const { mongoose } = require("../")
-const { hashSync } = require("../../service/bcrypt")
-const { roles, models } = require("../../_base/constants")
+const { hashSync } = require("../../src/service/bcrypt")
+const { roles, models } = require("../../src/_base/constants")
 
 const userSchema = mongoose.Schema(
   {

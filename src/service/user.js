@@ -1,4 +1,4 @@
-const { user } = require("../database/models/user")
+const { user } = require("../../database/models")
 const {
   BadRequestError,
   UnauthorizedError,

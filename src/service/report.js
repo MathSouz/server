@@ -1,14 +1,11 @@
 const { isValidObjectId } = require("mongoose")
-const { report } = require("../database/models/report")
-const { VALID_REPORT_TARGETS, roles } = require("../_base/constants")
+const { report, post, comment, user } = require("../../database/models")
+const { VALID_REPORT_TARGETS } = require("../../src/_base/constants")
 const {
   BadRequestError,
   NotFoundError,
   ForbiddenError
 } = require("../_base/error")
-const { post } = require("../database/models/post")
-const { comment } = require("../database/models/comment")
-const { user } = require("../database/models/user")
 
 exports.getRecentReports = async (limit = 10, page = 1, solved) => {
   const options = { limit, page, sort: { createdAt: -1 } }

@@ -1,5 +1,5 @@
 require("dotenv/config")
-const { token } = require("../database/models/token")
+const { token } = require("../../database/models")
 const { NotFoundError, ForbiddenError } = require("../_base/error")
 
 exports.sign = async user => {

@@ -1,6 +1,6 @@
 const { mongoose } = require("../")
 const randomstring = require("randomstring")
-const { models } = require("../../_base/constants")
+const { models } = require("../../src/_base/constants")
 const { SchemaTypes } = require("mongoose")
 
 const generateExpirationDate = () => {

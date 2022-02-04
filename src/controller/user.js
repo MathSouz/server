@@ -10,7 +10,6 @@ const {
   getUser,
   banUser
 } = require("../service/user")
-const { ForbiddenError } = require("../_base/error")
 
 exports.getUser = async (req, res, next) => {
   const { userId } = req.params

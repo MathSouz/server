@@ -1,6 +1,5 @@
 const { isValidObjectId } = require("mongoose")
-const { comment } = require("../database/models/comment")
-const { post } = require("../database/models/post")
+const { comment, post } = require("../../database/models")
 const { roles } = require("../_base/constants")
 const {
   BadRequestError,

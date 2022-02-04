@@ -1,5 +1,5 @@
 const { isValidObjectId } = require("mongoose")
-const { post } = require("../database/models/post")
+const { post } = require("../../database/models")
 const { VALID_MOODS, roles } = require("../_base/constants")
 const {
   NotFoundError,

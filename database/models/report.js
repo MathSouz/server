@@ -1,6 +1,6 @@
 const { SchemaTypes } = require("mongoose")
 const { mongoose } = require("../")
-const { models, VALID_REPORT_TARGETS } = require("../../_base/constants")
+const { models, VALID_REPORT_TARGETS } = require("../../src/_base/constants")
 const mongoosePaginate = require("mongoose-paginate-v2")
 
 const reportSchema = mongoose.Schema(

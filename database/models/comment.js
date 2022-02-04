@@ -1,6 +1,6 @@
 const { SchemaTypes } = require("mongoose")
 const { mongoose } = require("../")
-const { models } = require("../../_base/constants")
+const { models } = require("../../src/_base/constants")
 const mongoosePaginate = require("mongoose-paginate-v2")
 
 const commentSchema = mongoose.Schema(
