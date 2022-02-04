@@ -1,12 +1,18 @@
-const { createComment } = require("../src/service/comment")
-const db = require("./db")
-beforeAll(async () => await db.connect())
-afterEach(async () => await db.clearDatabase())
-afterAll(async () => await db.closeDatabase())
+const { user } = require("../database/models")
+const { loginUser } = require("../src/service/user")
+const { compareSync } = require("../src/service/bcrypt")
 
-describe(" test comments ", () => {
-  it("Create Comment", async done => {
-    await expect(createComment("123", "123", null)).rejects.toThrow()
-    done()
+describe("user tests", () => {
+  it("register user successfully", async () => {
+    user.findOne = jest.fn().mockImplementationOnce(() => ({
+      select: jest.fn().mockImplementationOnce(() => ({
+        select: jest.fn().mockImplementationOnce(() => ({
+          select: jest.fn().mockResolvedValueOnce({})
+        }))
+      }))
+    }))
+
+    const login = await loginUser("email@email.com", "password")
+    expect(login).toBe(true)
   })
 })
