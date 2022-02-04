@@ -1,3 +1,4 @@
+const sanitize = require("mongo-sanitize")
 const { user } = require("../../database/models/user")
 const { verify } = require("../service/token")
 const {
@@ -7,7 +8,7 @@ const {
 } = require("../_base/error")
 
 const isAuthenticated = async (req, res, next) => {
-  const { authorization } = req.headers
+  const { authorization } = sanitize(req.headers)
 
   try {
     if (!authorization) {

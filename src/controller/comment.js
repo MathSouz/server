@@ -1,3 +1,4 @@
+const sanitize = require("mongo-sanitize")
 const {
   createComment,
   deleteComment,
@@ -7,8 +8,8 @@ const { httpStatusCodes } = require("../_base/constants")
 
 exports.createComment = async (req, res, next) => {
   const { _id } = req.user
-  const { postId } = req.params
-  const { text } = req.body
+  const { postId } = sanitize(req.params)
+  const { text } = sanitize(req.body)
   try {
     const createdComment = await createComment(_id, postId, text)
     return res.json(createdComment)
@@ -19,7 +20,7 @@ exports.createComment = async (req, res, next) => {
 
 exports.deleteComment = async (req, res, next) => {
   const user = req.user
-  const { commentId } = req.params
+  const { commentId } = sanitize(req.params)
   try {
     await deleteComment(user, commentId)
     return res.sendStatus(httpStatusCodes.OK)
@@ -29,8 +30,8 @@ exports.deleteComment = async (req, res, next) => {
 }
 
 exports.getPostComments = async (req, res, next) => {
-  const { postId } = req.params
-  const { page = 1, limit = 10 } = req.query
+  const { postId } = sanitize(req.params)
+  const { page = 1, limit = 10 } = sanitize(req.query)
 
   try {
     const pagedComments = await getPostComments(postId, limit, page)

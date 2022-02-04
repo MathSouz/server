@@ -10,11 +10,10 @@ const {
   getUser,
   banUser
 } = require("../service/user")
-const { uploadUserImage } = require("../service/s3")
-const { BadRequestError } = require("../_base/error")
+const sanitize = require("mongo-sanitize")
 
 exports.getUser = async (req, res, next) => {
-  const { userId } = req.params
+  const { userId } = sanitize(req.params)
 
   try {
     const foundUser = await getUser(userId)
@@ -45,7 +44,7 @@ exports.changeAvatar = async (req, res, next) => {
 }
 
 exports.changeUsername = async (req, res, next) => {
-  const { username } = req.body
+  const { username } = sanitize(req.body)
   const user = req.user
 
   try {
@@ -58,7 +57,7 @@ exports.changeUsername = async (req, res, next) => {
 }
 
 exports.changePassword = async (req, res, next) => {
-  const { password } = req.body
+  const { password } = sanitize(req.body)
   const user = req.user
 
   try {
@@ -71,8 +70,8 @@ exports.changePassword = async (req, res, next) => {
 
 exports.changeRole = async (req, res, next) => {
   const user = req.user
-  const { targetId } = req.params
-  const { newRole } = req.body
+  const { targetId } = sanitize(req.params)
+  const { newRole } = sanitize(req.body)
 
   try {
     await changeRole(user, targetId, newRole)
@@ -93,7 +92,7 @@ exports.logout = async (req, res, next) => {
 }
 
 exports.login = async (req, res, next) => {
-  const { email, password } = req.body
+  const { email, password } = sanitize(req.body)
 
   try {
     const response = await loginUser(email, password)
@@ -104,7 +103,7 @@ exports.login = async (req, res, next) => {
 }
 
 exports.register = async (req, res, next) => {
-  const { username, email, password } = req.body
+  const { username, email, password } = sanitize(req.body)
 
   try {
     const createdUser = await registerUser(username, email, password)
@@ -115,7 +114,7 @@ exports.register = async (req, res, next) => {
 }
 
 exports.banUser = async (req, res, next) => {
-  const { userId } = req.params
+  const { userId } = sanitize(req.params)
   try {
     await banUser(userId, true)
 
@@ -126,7 +125,7 @@ exports.banUser = async (req, res, next) => {
 }
 
 exports.pardonUser = async (req, res, next) => {
-  const { userId } = req.params
+  const { userId } = sanitize(req.params)
   try {
     await banUser(userId, false)
 

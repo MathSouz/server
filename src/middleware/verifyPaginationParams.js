@@ -1,9 +1,10 @@
+const sanitize = require("mongo-sanitize")
 const { BadRequestError } = require("../_base/error")
 
 const verifyPaginationParams = (req, res, next) => {
   const MIN_LIMIT = 1
   const MAX_LIMIT = 20
-  const { limit = 10, page = 1 } = req.query
+  const { limit = 10, page = 1 } = sanitize(req.query)
 
   if (limit < MIN_LIMIT) {
     throw new BadRequestError(

@@ -1,3 +1,4 @@
+const sanitize = require("mongo-sanitize")
 const {
   getPost,
   getAllPosts,
@@ -9,7 +10,7 @@ const {
 const { httpStatusCodes } = require("../_base/constants")
 
 exports.getPost = async (req, res, next) => {
-  const { postId } = req.params
+  const { postId } = sanitize(req.params)
 
   try {
     const foundPost = await getPost(postId)
@@ -21,8 +22,8 @@ exports.getPost = async (req, res, next) => {
 
 exports.reactPost = async (req, res, next) => {
   const user = req.user
-  const { postId } = req.params
-  const { mood } = req.body
+  const { postId } = sanitize(req.params)
+  const { mood } = sanitize(req.body)
   const post = { _id: postId }
 
   try {
@@ -69,8 +70,8 @@ exports.getRankedPosts = async (req, res, next) => {
 }
 
 exports.createPost = async (req, res, next) => {
+  const { text, tags } = sanitize(req.body)
   const user = req.user
-  let { text, tags } = req.body
   const part = req.file
 
   try {
