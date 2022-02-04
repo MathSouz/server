@@ -39,7 +39,7 @@ exports.loginUser = async (email, password) => {
   }
 
   const foundUser = await user
-    .findOne({ email })
+    .findOne({ email: email })
     .select("+password")
     .select("+email")
     .select("+banned")
@@ -86,7 +86,6 @@ exports.changeRole = async (currentUser, targetId, newRole) => {
 
   if (!update.modifiedCount) {
     throw new ForbiddenError(`This user is a ${newRole} already.`)
-  } else {
   }
 }
 
