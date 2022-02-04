@@ -1,6 +1,10 @@
 const { user } = require("../../database/models/user")
 const { verify } = require("../service/token")
-const { NotFoundError, BadRequestError } = require("../_base/error")
+const {
+  NotFoundError,
+  BadRequestError,
+  UnauthorizedError
+} = require("../_base/error")
 
 const isAuthenticated = async (req, res, next) => {
   const { authorization } = req.headers
@@ -30,14 +34,14 @@ const isAuthenticated = async (req, res, next) => {
     }
 
     if (userFound.banned) {
-      throw new UnauthorizedError("This user has benn banned.")
+      throw new UnauthorizedError("This user has been banned.")
     }
 
     req.user = userFound
     req.token = token
     next()
   } catch (err) {
-    return err
+    return next(err)
   }
 }
 

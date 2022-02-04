@@ -1,9 +1,9 @@
-exports.roles = {
+const roles = {
   NORMIE: "NORMIE",
   ADMIN: "ADMIN"
 }
 
-exports.httpStatusCodes = {
+const httpStatusCodes = {
   OK: 200,
   BAD_REQUEST: 400,
   UNAUTHORIZED: 401,
@@ -12,7 +12,7 @@ exports.httpStatusCodes = {
   INTERNAL_SERVER: 500
 }
 
-exports.models = {
+const models = {
   user: "users",
   post: "posts",
   comment: "comments",
@@ -21,10 +21,14 @@ exports.models = {
   report: "reports"
 }
 
-exports.VALID_REPORT_TARGETS = [
-  this.models.user,
-  this.models.post,
-  this.models.comment
-]
+const VALID_REPORT_TARGETS = [models.user, models.post, models.comment]
 
-exports.VALID_MOODS = ["none", "love", "hate"]
+const VALID_MOODS = ["none", "love", "hate"]
+
+module.exports = {
+  models,
+  roles,
+  VALID_MOODS,
+  VALID_REPORT_TARGETS,
+  httpStatusCodes
+}

@@ -7,12 +7,11 @@ const {
   ForbiddenError
 } = require("../_base/error")
 
-exports.getRecentReports = async (limit = 10, page = 1, solved) => {
+exports.getRecentReports = async (solved, limit = 10, page = 1) => {
   const options = { limit, page, sort: { createdAt: -1 } }
   const filter = solved === null || solved === undefined ? {} : { solved }
 
-  const result = await report.paginate(filter, options)
-  return result
+  return report.paginate(filter, options)
 }
 
 exports.solveReport = async reportId => {
@@ -75,12 +74,10 @@ const createReport = async (currentUser, text, target, object, model) => {
     throw new NotFoundError("Target doesn't exist.")
   }
 
-  const createdReport = await report.create({
+  return report.create({
     user: _id,
     text,
     target,
     object
   })
-
-  return createdReport
 }

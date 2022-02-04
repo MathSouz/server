@@ -24,8 +24,7 @@ exports.getPost = async postId => {
 
 exports.getAllPosts = async (limit, page, sort) => {
   const options = { limit, page, sort: { createdAt: sort } }
-  const posts = await post.paginate({}, options)
-  return posts
+  return post.paginate({}, options)
 }
 
 exports.createPost = async (file, text, user, tags) => {
@@ -49,14 +48,12 @@ exports.createPost = async (file, text, user, tags) => {
 
   tags = tags.map(v => v.toLowerCase())
 
-  const createdPost = await post.create({
+  return post.create({
     user,
     text,
     imageUrl,
     tags
   })
-
-  return createdPost
 }
 
 exports.reactPost = async (user, targetPost, mood) => {
@@ -174,6 +171,5 @@ exports.getRankedPosts = async (limit, page) => {
 
   const aggregation = post.aggregate(query)
 
-  const posts = await post.aggregatePaginate(aggregation, options)
-  return posts
+  return post.aggregatePaginate(aggregation, options)
 }

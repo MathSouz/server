@@ -40,17 +40,15 @@ exports.createComment = async (userId, postId, text) => {
   if (!text) {
     throw new BadRequestError("No text.")
   }
-  const createdComment = await comment.create({
+
+  return comment.create({
     user: userId,
     post: postId,
     text
   })
-
-  return createdComment
 }
 
 exports.getPostComments = async (postId, limit = 10, page = 1) => {
   const options = { limit, page, sort: { createdAt: -1 } }
-  const pagedComments = await comment.paginate({ post: postId }, options)
-  return pagedComments
+  return comment.paginate({ post: postId }, options)
 }

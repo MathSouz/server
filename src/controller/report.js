@@ -25,7 +25,7 @@ exports.solveReport = async (req, res, next) => {
 exports.getRecentReports = async (req, res, next) => {
   const { limit, page, solved } = req.query
   try {
-    const result = await getRecentReports(limit, page, solved)
+    const result = await getRecentReports(solved, limit, page)
     return res.json(result)
   } catch (err) {
     return next(err)

@@ -9,6 +9,7 @@ const privatePostRouter = require("./routes/private/post")
 const privateReportRouter = require("./routes/private/report")
 
 const BaseError = require("./_base/error/baseError")
+const { httpStatusCodes } = require("./_base/constants")
 
 const port = process.env.PORT
 
@@ -25,14 +26,12 @@ app.use("/private/post", privatePostRouter)
 app.use("/private/report", privateReportRouter)
 
 app.use(function (err, req, res, next) {
-  if (err) {
-    console.log(err)
-  }
-
   if (err instanceof BaseError) {
     res.status(err.statusCode).json({ message: err.name || err.message })
   } else {
-    res.status(500).json({ message: "An unexpected error occurred..." })
+    res
+      .status(httpStatusCodes.INTERNAL_SERVER)
+      .json({ message: "An unexpected error occurred..." })
   }
   next()
 })

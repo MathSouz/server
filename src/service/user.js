@@ -39,7 +39,7 @@ exports.loginUser = async (email, password) => {
   }
 
   const foundUser = await user
-    .findOne({ email: email })
+    .findOne({ email })
     .select("+password")
     .select("+email")
     .select("+banned")
