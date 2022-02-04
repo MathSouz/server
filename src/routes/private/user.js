@@ -14,6 +14,8 @@ const {
 } = require("../../controller/user")
 const { uploadUserImage } = require("../../service/s3")
 const isUserAdmin = require("../../middleware/isUserAdmin")
+const deleteInvalidImage = require("../../middleware/deleteInvalidImage")
+const { MAX_IMAGE_SIZE } = require("../../_base/constants")
 
 router
   .use(isAuthenticated)
@@ -21,7 +23,12 @@ router
   .put("/change/username", changeUsername)
   .put("/change/password", changePassword)
   .put("/change/role/:targetId", isUserAdmin, changeRole)
-  .put("/change/avatar", uploadUserImage.single("image"), changeAvatar)
+  .put(
+    "/change/avatar",
+    uploadUserImage,
+    deleteInvalidImage(MAX_IMAGE_SIZE.avatar),
+    changeAvatar
+  )
   .delete("/logout", logout)
   .get("/:userId", getUser)
   .put("/admin/ban/:userId", isUserAdmin, banUser)

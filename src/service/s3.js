@@ -37,7 +37,7 @@ exports.uploadPostImage = multer({
     }
   }),
   fileFilter: multerFilter(["image/jpeg", "image/png", "image/gif"])
-})
+}).single("image")
 
 exports.uploadUserImage = multer({
   storage: multerS3({
@@ -55,7 +55,7 @@ exports.uploadUserImage = multer({
     }
   }),
   fileFilter: multerFilter(["image/jpeg", "image/png"])
-})
+}).single("image")
 
 exports.deleteImage = Key => {
   s3.deleteObject({ Bucket: process.env.BUCKET_NAME, Key }, (err, data) => {

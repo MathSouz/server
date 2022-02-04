@@ -9,6 +9,7 @@ const { sign, revoke } = require("./token")
 const { roles } = require("../_base/constants")
 const { isValidObjectId } = require("mongoose")
 const { compareSync, hashSync } = require("./bcrypt")
+const { uploadUserImage } = require("./s3")
 
 exports.registerUser = async (username, email, password) => {
   if (!username) {
@@ -116,7 +117,9 @@ exports.changeUsername = async (currentUser, username) => {
   }
 }
 
-exports.changeAvatar = async (file, currentUser) => {
+exports.changeAvatar = async (req, res, currentUser) => {
+  const { file } = req
+
   const avatarUrl = file
     ? {
         location: file.location,

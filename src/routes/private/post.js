@@ -16,10 +16,17 @@ const {
   deleteComment
 } = require("../../controller/comment")
 const verifyPaginationParams = require("../../middleware/verifyPaginationParams")
+const deleteInvalidImage = require("../../middleware/deleteInvalidImage")
+const { MAX_IMAGE_SIZE } = require("../../_base/constants")
 
 router
   .use(isAuthenticated)
-  .post("/create", uploadPostImage.single("image"), createPost)
+  .post(
+    "/create",
+    uploadPostImage,
+    deleteInvalidImage(MAX_IMAGE_SIZE.post),
+    createPost
+  )
   .put("/:postId/react", reactPost)
   .delete("/:postId", deletePost)
   .get("/:postId", getPost)

@@ -1,3 +1,8 @@
+const MAX_IMAGE_SIZE = {
+  avatar: 1024 * 1024 * 2,
+  post: 1024 * 1024 * 5
+}
+
 const roles = {
   NORMIE: "NORMIE",
   ADMIN: "ADMIN"
@@ -30,5 +35,6 @@ module.exports = {
   roles,
   VALID_MOODS,
   VALID_REPORT_TARGETS,
-  httpStatusCodes
+  httpStatusCodes,
+  MAX_IMAGE_SIZE
 }

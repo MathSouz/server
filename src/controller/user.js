@@ -10,6 +10,8 @@ const {
   getUser,
   banUser
 } = require("../service/user")
+const { uploadUserImage } = require("../service/s3")
+const { BadRequestError } = require("../_base/error")
 
 exports.getUser = async (req, res, next) => {
   const { userId } = req.params
@@ -33,10 +35,9 @@ exports.me = async (req, res, next) => {
 
 exports.changeAvatar = async (req, res, next) => {
   const user = req.user
-  const file = req.file
 
   try {
-    changeAvatar(file, user)
+    changeAvatar(req, res, user)
     return res.sendStatus(httpStatusCodes.OK)
   } catch (err) {
     return next(err)
