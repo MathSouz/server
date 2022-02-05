@@ -2,6 +2,10 @@ const { deleteImage } = require("../service/s3")
 const { BadRequestError } = require("../_base/error")
 
 module.exports = maxSize => (req, res, next) => {
+  if (!req.file) {
+    return next()
+  }
+
   const { size, key } = req.file
 
   try {
