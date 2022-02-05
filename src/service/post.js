@@ -14,7 +14,9 @@ exports.getPost = async postId => {
     throw new NotFoundError("Post not found.")
   }
 
-  const foundPost = await post.findOne({ _id: postId }).populate("user")
+  const foundPost = await post
+    .findOne({ _id: postId })
+    .populate(["user", "loveReactions", "hateReactions"])
 
   if (!foundPost) {
     throw new NotFoundError("Post not found.")
@@ -24,7 +26,12 @@ exports.getPost = async postId => {
 }
 
 exports.getAllPosts = async (limit, page, sort) => {
-  const options = { limit, page, sort: { createdAt: sort } }
+  const options = {
+    limit,
+    page,
+    sort: { createdAt: sort },
+    populate: ["user", "loveReactions", "hateReactions"]
+  }
   return post.paginate({}, options)
 }
 

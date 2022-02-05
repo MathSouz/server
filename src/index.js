@@ -26,6 +26,7 @@ app.use("/private/post", privatePostRouter)
 app.use("/private/report", privateReportRouter)
 
 app.use(function (err, req, res, next) {
+  console.log(err)
   if (err instanceof BaseError) {
     res.status(err.statusCode).json({ message: err.name || err.message })
   } else {
