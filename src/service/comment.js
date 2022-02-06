@@ -1,7 +1,7 @@
 const sanitize = require("mongo-sanitize")
 const { isValidObjectId } = require("mongoose")
 const { comment, post } = require("../../database/models")
-const { roles } = require("../_base/constants")
+const { roles, models } = require("../_base/constants")
 const {
   BadRequestError,
   NotFoundError,
@@ -54,7 +54,17 @@ exports.getPostComments = async (postId, limit = 10, page = 1) => {
     limit,
     page,
     sort: { createdAt: -1 },
-    populate: ["user", "post"]
+    populate: [
+      { path: "user", model: models.user },
+      {
+        path: "post",
+        model: models.post,
+        populate: {
+          path: "user",
+          model: models.user
+        }
+      }
+    ]
   }
   return comment.paginate({ post: postId }, options)
 }
