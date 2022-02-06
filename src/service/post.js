@@ -9,7 +9,7 @@ const {
 } = require("../_base/error")
 const { deleteImage } = require("./s3")
 
-exports.getPost = async postId => {
+exports.getPost = async (user, postId) => {
   if (!isValidObjectId(postId)) {
     throw new NotFoundError("Post not found.")
   }
@@ -17,10 +17,16 @@ exports.getPost = async postId => {
   const foundPost = await post
     .findOne({ _id: postId })
     .populate(["user", "loveReactions", "hateReactions"])
+    .lean()
 
   if (!foundPost) {
     throw new NotFoundError("Post not found.")
   }
+
+  const isOwner = foundPost.user != user._id
+  const isAdmin = user.role === roles.ADMIN
+
+  foundPost.canDelete = isOwner || isAdmin
 
   return foundPost
 }
@@ -121,7 +127,10 @@ exports.deletePost = async (user, currentPost) => {
     throw new NotFoundError("Post not found.")
   }
 
-  if (foundPost.user != user._id && user.role !== roles.ADMIN) {
+  const isOwner = foundPost.user != user._id
+  const isAdmin = user.role === roles.ADMIN
+
+  if (!isOwner && !isAdmin) {
     throw new UnauthorizedError("You don't have permission.")
   }
 

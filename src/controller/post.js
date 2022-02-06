@@ -10,10 +10,11 @@ const {
 const { httpStatusCodes } = require("../_base/constants")
 
 exports.getPost = async (req, res, next) => {
+  const user = req.user
   const { postId } = sanitize(req.params)
 
   try {
-    const foundPost = await getPost(postId)
+    const foundPost = await getPost(user, postId)
     return res.json(foundPost)
   } catch (err) {
     return next(err)

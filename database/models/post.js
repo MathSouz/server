@@ -26,7 +26,7 @@ const postSchema = mongoose.Schema(
     },
     tags: []
   },
-  { timestamps: true }
+  { timestamps: true, strict: false }
 )
 
 postSchema.plugin(mongoosePaginate)
