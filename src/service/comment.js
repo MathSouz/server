@@ -50,6 +50,11 @@ exports.createComment = async (userId, postId, text) => {
 }
 
 exports.getPostComments = async (postId, limit = 10, page = 1) => {
-  const options = { limit, page, sort: { createdAt: -1 } }
+  const options = {
+    limit,
+    page,
+    sort: { createdAt: -1 },
+    populate: ["user", "post"]
+  }
   return comment.paginate({ post: postId }, options)
 }

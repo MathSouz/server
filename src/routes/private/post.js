@@ -33,7 +33,7 @@ router
   .get("/", verifyPaginationParams, getAllPosts)
   .get("/get/rank", verifyPaginationParams, getRankedPosts)
   .post("/:postId/comment", createComment)
-  .get("/:postId/comment", getPostComments)
+  .get("/:postId/comment", verifyPaginationParams, getPostComments)
   .delete("/comment/:commentId", deleteComment)
 
 module.exports = router
