@@ -55,7 +55,17 @@ exports.getPostComments = async (postId, limit = 10, page = 1) => {
     limit,
     page,
     sort: { createdAt: -1 },
-    populate: [{ path: "user", model: models.user }]
+    populate: [
+      { path: "user", model: models.user },
+      {
+        path: "post",
+        model: models.post,
+        populate: {
+          path: "user",
+          model: models.user
+        }
+      }
+    ]
   }
   return comment.paginate({ post: postId }, options)
 }
