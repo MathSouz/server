@@ -11,6 +11,7 @@ const {
 exports.deleteComment = async (user, commentId) => {
   const foundComment = await comment
     .findById(commentId)
+    .select("+post")
     .populate("user")
     .populate({ path: "post", populate: { path: "user" } })
 
@@ -54,17 +55,7 @@ exports.getPostComments = async (postId, limit = 10, page = 1) => {
     limit,
     page,
     sort: { createdAt: -1 },
-    populate: [
-      { path: "user", model: models.user },
-      {
-        path: "post",
-        model: models.post,
-        populate: {
-          path: "user",
-          model: models.user
-        }
-      }
-    ]
+    populate: [{ path: "user", model: models.user }]
   }
   return comment.paginate({ post: postId }, options)
 }

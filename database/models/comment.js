@@ -13,7 +13,8 @@ const commentSchema = mongoose.Schema(
     post: {
       type: SchemaTypes.ObjectId,
       ref: models.post,
-      required: true
+      required: true,
+      select: false
     },
     text: {
       type: String,
