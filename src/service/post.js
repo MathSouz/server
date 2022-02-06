@@ -7,6 +7,7 @@ const {
   BadRequestError,
   UnauthorizedError
 } = require("../_base/error")
+const { deleteAllPostComments } = require("./comment")
 const { deleteImage } = require("./s3")
 
 exports.getPost = async (user, postId) => {
@@ -133,6 +134,8 @@ exports.deletePost = async (user, currentPost) => {
   if (!isOwner && !isAdmin) {
     throw new UnauthorizedError("You don't have permission.")
   }
+
+  await deleteAllPostComments(foundPost._id)
 
   const deleted = await foundPost.remove()
 

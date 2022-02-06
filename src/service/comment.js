@@ -8,6 +8,16 @@ const {
   UnauthorizedError
 } = require("../_base/error")
 
+exports.deleteAllPostComments = async postId => {
+  const postExists = await post.exists({ _id: postId })
+
+  if (postExists) {
+    await comment.deleteMany({ post: postId })
+  } else {
+    throw new NotFoundError()
+  }
+}
+
 exports.deleteComment = async (user, commentId) => {
   const foundComment = await comment
     .findById(commentId)
