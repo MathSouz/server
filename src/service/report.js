@@ -1,6 +1,6 @@
 const { isValidObjectId } = require("mongoose")
 const { report, post, comment, user } = require("../../database/models")
-const { VALID_REPORT_TARGETS } = require("../../src/_base/constants")
+const { VALID_REPORT_TARGETS, models } = require("../../src/_base/constants")
 const {
   BadRequestError,
   NotFoundError,
@@ -8,7 +8,12 @@ const {
 } = require("../_base/error")
 
 exports.getRecentReports = async (solved, limit = 10, page = 1) => {
-  const options = { limit, page, sort: { createdAt: -1 } }
+  const options = {
+    limit,
+    page,
+    sort: { createdAt: -1 },
+    populate: [{ path: "user", model: "users" }]
+  }
   const filter = solved === null || solved === undefined ? {} : { solved }
 
   return report.paginate(filter, options)
@@ -74,10 +79,12 @@ const createReport = async (currentUser, text, target, object, model) => {
     throw new NotFoundError("Target doesn't exist.")
   }
 
-  return report.create({
+  const createdReport = await report.create({
     user: _id,
     text,
     target,
     object
   })
+
+  return report.populate(createdReport, [{ path: "user", model: models.user }])
 }
