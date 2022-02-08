@@ -24,7 +24,7 @@ exports.getPost = async (user, postId) => {
     throw new NotFoundError("Post not found.")
   }
 
-  const isOwner = foundPost.user != user._id
+  const isOwner = foundPost.user == user._id
   const isAdmin = user.role === roles.ADMIN
 
   foundPost.canDelete = isOwner || isAdmin
@@ -128,7 +128,7 @@ exports.deletePost = async (user, currentPost) => {
     throw new NotFoundError("Post not found.")
   }
 
-  const isOwner = foundPost.user != user._id
+  const isOwner = foundPost.user == user._id
   const isAdmin = user.role === roles.ADMIN
 
   if (!isOwner && !isAdmin) {
