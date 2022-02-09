@@ -13,7 +13,8 @@ const { uploadPostImage } = require("../../service/s3")
 const {
   createComment,
   getPostComments,
-  deleteComment
+  deleteComment,
+  getComment
 } = require("../../controller/comment")
 const verifyPaginationParams = require("../../middleware/verifyPaginationParams")
 const deleteInvalidImage = require("../../middleware/deleteInvalidImage")
@@ -35,5 +36,6 @@ router
   .post("/:postId/comment", createComment)
   .get("/:postId/comment", verifyPaginationParams, getPostComments)
   .delete("/comment/:commentId", deleteComment)
+  .get("/comment/:commentId", getComment)
 
 module.exports = router

@@ -1,4 +1,3 @@
-const sanitize = require("mongo-sanitize")
 const { isValidObjectId } = require("mongoose")
 const { comment, post } = require("../../database/models")
 const { roles, models } = require("../_base/constants")
@@ -7,6 +6,34 @@ const {
   NotFoundError,
   UnauthorizedError
 } = require("../_base/error")
+
+exports.getComment = async commentId => {
+  if (!isValidObjectId(commentId)) {
+    throw new BadRequestError("Invalid id.")
+  }
+
+  const foundComment = await comment
+    .findById(commentId)
+    .select("+post")
+    .populate([
+      "user",
+      {
+        path: "post",
+        model: models.post,
+        populate: [
+          { path: "user", model: models.user },
+          { path: "loveReactions", model: models.user },
+          { path: "hateReactions", model: models.user }
+        ]
+      }
+    ])
+
+  if (!foundComment) {
+    throw new NotFoundError()
+  }
+
+  return foundComment
+}
 
 exports.deleteAllPostComments = async postId => {
   const postExists = await post.exists({ _id: postId })

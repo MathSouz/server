@@ -63,12 +63,14 @@ exports.createPost = async (file, text, user, tags) => {
 
   tags = tags.map(v => v.toLowerCase())
 
-  return post.create({
+  const createdPost = await post.create({
     user,
     text,
     imageUrl,
     tags
   })
+
+  return { _id: createdPost._id }
 }
 
 exports.reactPost = async (user, targetPost, mood) => {

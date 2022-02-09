@@ -39,8 +39,8 @@ exports.createUserReport = async (req, res, next) => {
   const { target } = sanitize(req.params)
 
   try {
-    const createdReport = await createUserReport(user, text, target)
-    return res.json(createdReport)
+    await createUserReport(user, text, target)
+    return res.sendStatus(httpStatusCodes.OK)
   } catch (err) {
     return next(err)
   }
@@ -51,8 +51,8 @@ exports.createPostReport = async (req, res, next) => {
   const { text } = sanitize(req.body)
   const { target } = sanitize(req.params)
   try {
-    const createdReport = await createPostReport(user, text, target)
-    return res.json(createdReport)
+    await createPostReport(user, text, target)
+    return res.sendStatus(httpStatusCodes.OK)
   } catch (err) {
     return next(err)
   }
@@ -63,8 +63,8 @@ exports.createCommentReport = async (req, res, next) => {
   const { text } = sanitize(req.body)
   const { target } = sanitize(req.params)
   try {
-    const createdReport = await createCommentReport(user, text, target)
-    return res.json(createdReport)
+    await createCommentReport(user, text, target)
+    return res.sendStatus(httpStatusCodes.OK)
   } catch (err) {
     return next(err)
   }

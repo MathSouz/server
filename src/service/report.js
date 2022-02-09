@@ -35,11 +35,11 @@ exports.solveReport = async reportId => {
 }
 
 exports.createUserReport = async (currentUser, text, target) => {
-  return createReport(currentUser, text, target, VALID_REPORT_TARGETS[0], user)
+  await createReport(currentUser, text, target, VALID_REPORT_TARGETS[0], user)
 }
 
 exports.createCommentReport = async (currentUser, text, target) => {
-  return createReport(
+  await createReport(
     currentUser,
     text,
     target,
@@ -49,7 +49,7 @@ exports.createCommentReport = async (currentUser, text, target) => {
 }
 
 exports.createPostReport = async (currentUser, text, target) => {
-  return createReport(currentUser, text, target, VALID_REPORT_TARGETS[1], post)
+  await createReport(currentUser, text, target, VALID_REPORT_TARGETS[1], post)
 }
 
 const createReport = async (currentUser, text, target, object, model) => {
@@ -79,12 +79,10 @@ const createReport = async (currentUser, text, target, object, model) => {
     throw new NotFoundError("Target doesn't exist.")
   }
 
-  const createdReport = await report.create({
+  await report.create({
     user: _id,
     text,
     target,
     object
   })
-
-  return report.populate(createdReport, [{ path: "user", model: models.user }])
 }

@@ -2,9 +2,21 @@ const sanitize = require("mongo-sanitize")
 const {
   createComment,
   deleteComment,
-  getPostComments
+  getPostComments,
+  getComment
 } = require("../service/comment")
 const { httpStatusCodes } = require("../_base/constants")
+
+exports.getComment = async (req, res, next) => {
+  const { commentId } = req.params
+
+  try {
+    const foundComment = await getComment(commentId)
+    return res.json(foundComment)
+  } catch (err) {
+    return next(err)
+  }
+}
 
 exports.createComment = async (req, res, next) => {
   const { _id } = req.user
