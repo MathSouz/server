@@ -15,7 +15,7 @@ const reportSchema = mongoose.Schema(
       required: true
     },
     target: {
-      type: SchemaTypes.ObjectId,
+      type: Object,
       required: true
     },
     object: {

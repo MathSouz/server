@@ -4,7 +4,8 @@ const {
   createPostReport,
   createCommentReport,
   solveReport,
-  getRecentReports
+  getRecentReports,
+  getReport
 } = require("../../controller/report")
 const router = express.Router()
 const { isAuthenticated } = require("../../middleware/userAuthenticated")
@@ -16,6 +17,7 @@ router
   .post("/post/:target", createPostReport)
   .post("/comment/:target", createCommentReport)
   .get("/admin/recent", isUserAdmin, getRecentReports)
+  .get("/admin/:reportId", isUserAdmin, getReport)
   .put("/admin/solve/:reportId", isUserAdmin, solveReport)
 
 module.exports = router

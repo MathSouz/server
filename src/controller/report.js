@@ -5,17 +5,25 @@ const {
   createPostReport,
   createCommentReport,
   getRecentReports,
-  solveReport
+  solveReport,
+  getReport
 } = require("../service/report")
 const { httpStatusCodes } = require("../_base/constants")
-const { BadRequestError } = require("../_base/error")
+
+exports.getReport = async (req, res, next) => {
+  const { reportId } = sanitize(req.params)
+
+  try {
+    const foundReport = await getReport(reportId)
+    return res.json(foundReport)
+  } catch (err) {
+    return next(err)
+  }
+}
 
 exports.solveReport = async (req, res, next) => {
   const { reportId } = sanitize(req.params)
   try {
-    if (!isValidObjectId(reportId)) {
-      throw new BadRequestError("Invalid id.")
-    }
     await solveReport(reportId)
     return res.sendStatus(httpStatusCodes.OK)
   } catch (err) {

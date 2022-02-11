@@ -7,6 +7,14 @@ const {
   ForbiddenError
 } = require("../_base/error")
 
+exports.getReport = async reportId => {
+  if (!isValidObjectId(reportId)) {
+    throw new BadRequestError()
+  }
+
+  return report.findById(reportId).populate("user")
+}
+
 exports.getRecentReports = async (solved, limit = 10, page = 1) => {
   const options = {
     limit,
@@ -20,6 +28,10 @@ exports.getRecentReports = async (solved, limit = 10, page = 1) => {
 }
 
 exports.solveReport = async reportId => {
+  if (!isValidObjectId(reportId)) {
+    throw new BadRequestError("Invalid id.")
+  }
+
   const updatedReport = await report.findByIdAndUpdate(
     { _id: reportId, solved: false },
     { solved: true }
@@ -35,24 +47,67 @@ exports.solveReport = async reportId => {
 }
 
 exports.createUserReport = async (currentUser, text, target) => {
-  await createReport(currentUser, text, target, VALID_REPORT_TARGETS[0], user)
+  const foundUser = await user.findById(target).lean()
+
+  if (!foundUser) {
+    throw new NotFoundError()
+  }
+
+  await createReport(currentUser, text, foundUser, VALID_REPORT_TARGETS[0])
 }
 
 exports.createCommentReport = async (currentUser, text, target) => {
-  await createReport(
-    currentUser,
-    text,
-    target,
-    VALID_REPORT_TARGETS[2],
-    comment
-  )
+  const foundComment = await comment
+    .findById(target)
+    .select("+post")
+    .populate([
+      { path: "user", model: models.user },
+      {
+        path: "post",
+        model: models.post,
+        populate: [
+          {
+            path: "user",
+            model: models.user
+          },
+          {
+            path: "loveReactions",
+            model: models.user
+          },
+          {
+            path: "hateReactions",
+            model: models.user
+          }
+        ]
+      }
+    ])
+    .lean()
+
+  if (!foundComment) {
+    throw new NotFoundError()
+  }
+
+  await createReport(currentUser, text, foundComment, VALID_REPORT_TARGETS[2])
 }
 
 exports.createPostReport = async (currentUser, text, target) => {
-  await createReport(currentUser, text, target, VALID_REPORT_TARGETS[1], post)
+  const foundPost = await post
+    .findById(target)
+    .populate([
+      { path: "user", model: models.user },
+      { path: "loveReactions", model: models.user },
+      { path: "hateReactions", model: models.user }
+    ])
+    .lean()
+
+  if (!foundPost) {
+    throw new NotFoundError()
+  }
+
+  await createReport(currentUser, text, foundPost, VALID_REPORT_TARGETS[1])
 }
 
-const createReport = async (currentUser, text, target, object, model) => {
+const createReport = async (currentUser, text, target, object) => {
   const { _id } = currentUser
 
   if (!text) {
@@ -67,16 +122,6 @@ const createReport = async (currentUser, text, target, object, model) => {
     throw new BadRequestError(
       `Invalid target object. Valid objects: ${VALID_REPORT_TARGETS.join(", ")}`
     )
-  }
-
-  if (!isValidObjectId(_id) || !isValidObjectId(target)) {
-    throw new BadRequestError("Invalid id.")
-  }
-
-  const existsTarget = await model.exists({ _id: target })
-
-  if (!existsTarget) {
-    throw new NotFoundError("Target doesn't exist.")
   }
 
   await report.create({
