@@ -12,17 +12,17 @@ const isAuthenticated = async (req, res, next) => {
 
   try {
     if (!authorization) {
-      throw new BadRequestError({ message: "Token not found" })
+      throw new BadRequestError("Token not found")
     }
 
     const authorizationToken = authorization.split(" ")
 
     if (authorizationToken.length != 2) {
-      throw new BadRequestError({ message: "Bad format token" })
+      throw new BadRequestError("Bad format token")
     }
 
     if (authorizationToken[0] !== "Bearer") {
-      throw new BadRequestError({ message: "Bad format token" })
+      throw new BadRequestError("Bad format token")
     }
 
     const token = authorizationToken[1]
